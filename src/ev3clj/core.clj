@@ -1,11 +1,10 @@
-(ns ev3clj.core
-  (:import lejos.nxt.Motor)
-  (:import lejos.nxt.Sound)
-  (:import lejos.nxt.Button))
+(ns ev3clj.core)
 
-(def left (lejos.nxt.Motor/B))
-(def right (lejos.nxt.Motor/C))
+;(defn left [] (lejos.nxt.Motor/B))
+;(defn right [] (lejos.nxt.Motor/C))
 
+(declare left)
+(declare right)
 (defn setSpeed [motor speed]
   (println (str "Set speed to " speed))
   (.setSpeed motor speed))
