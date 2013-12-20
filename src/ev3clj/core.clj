@@ -1,10 +1,14 @@
 (ns ev3clj.core)
 
-;(defn left [] (lejos.nxt.Motor/B))
-;(defn right [] (lejos.nxt.Motor/C))
+; Have to use reflection because loading lejos.nxt.Motor does not work
+; unless youre running on an EV3
+(defn getMotorUsingReflection [motor]
+  (let [clazz (Class/forName "lejos.nxt.Motor")]
+    (.getField class motor)))
 
-(declare left)
-(declare right)
+(defn left [] (getMotorUsingReflection "B"))
+(defn right [] (getMotorUsingReflection "C"))  
+
 (defn setSpeed [motor speed]
   (println (str "Set speed to " speed))
   (.setSpeed motor speed))
