@@ -1,15 +1,18 @@
 (ns ev3clj.core)
 
-; Have to use reflection because loading lejos.nxt.Motor does not work
-; unless youre running on an EV3
-(defn getMotorUsingReflection [motor]
+; Have to use reflection to get the Motor because initializing the
+; lejos.nxt.Motor class tries to initialize the motor at compile time,
+; which obviously does not work unless youre compiling this on an EV3
+(defn getMotor [motor]
   (let [clazz (Class/forName "lejos.nxt.Motor")]
     (.getField clazz motor)))
 
-(def left lejos.nxt.Motor/B)
-(def right lejos.nxt.Motor/C)  
+;; B and C are labelled ports on the EV3
+(defn left [] (getMotor "B"))
+(defn right [] (getMotor "C"))  
 
 (defn setSpeed
+  "Sets speed for the given motor"
   ([motor speed]
      (println (str "Set speed to " speed))
      (.setSpeed motor speed))
