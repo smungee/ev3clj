@@ -18,10 +18,6 @@
 (def LOCAL_EV3_CLASS "lejos.nxt.LocalEV3")
 (def LOCAL_EV3_GET_LOCAL_EV3 "getLocalEV3")
 
-(comment (def LOCAL_EV3_CLASS "java.lang.String")
-         (def LOCAL_EV3_GET_LOCAL_EV3 "toString"))
-
-
 (defn getLocalEV3 []
   "Gets the local ev3 class that can be used to get access to motors,
 sensors, etc."
@@ -70,3 +66,12 @@ low-level Java object that controls the motor"
   "Makes this motor float"
   (let [{:keys [controller]} motor]
     (.flt controller)))
+
+;; some test code
+(comment
+  (def left (makeMotor "B"))
+  (def right (makeMotor "C"))
+  (updateMotor! (assoc left :speed 90 :acceleration 6000))
+  (forward! left)
+  (flt! left)
+  (stop! left))

@@ -3,15 +3,27 @@
   (:import lejos.robotics.RegulatedMotorListener)
   (:require [clojure.string :refer [lower-case]]))
 
-;; adding a mouse pressed callback to a Swing component:
-
+; adding a listener to a motor, so we can get called back when the
+; motor moves, and we can keep a track of where the robot is.
 (defn add-motor-listener
   [motor & args]
-  (let [listener (proxy [RegulatedMotorListener] []
-                     (rotationStarted [motor tachoCount stalled timestamp]
-                       (printf "Started motor at %10d, tachocount = %d" timestamp tachoCount))
-                     (rotationStopped [motor tachoCount stalled timestamp]
-                       (println "Stopped motor at %10d, tachocount = %d" timestamp tachoCount)))
+  (let [listener (reify RegulatedMotorListener
+                   (rotationStarted [this motor tachoCount stalled timestamp]
+                     (printf "Started motor at %10d, tachocount = %d" timestamp tachoCount))
+                   (rotationStopped [this motor tachoCount stalled timestamp]
+                     (printf "Stopped motor at %10d, tachocount = %d" timestamp tachoCount)))
         controller (:controller motor)]
     (.addListener controller listener)
     listener))
+
+(defn remove-motor-listener
+  [motor & args]
+  (let [controller (:controller motor)]
+    (.removeListener controller)))
+
+(defn distance-to-degrees [distance diameter]
+  "Calculate number of degrees of rotation required to travel the given distance, given the
+circumference of a wheel. Return units are in the same units as the provided distance."
+  (let [circumference (* Math/PI diameter)
+        degrees-per-cm (/ 360 circumference)]
+    (* cm degrees-per-cm)))
