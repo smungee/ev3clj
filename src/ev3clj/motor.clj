@@ -1,6 +1,5 @@
 (ns ev3clj.motor
   (:import lejos.nxt.EV3)
-;  (:import lejos.nxt.LocalEV3)
   (:require [clojure.string :refer [lower-case]]))
 
 
