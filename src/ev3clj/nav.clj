@@ -27,5 +27,5 @@ given distance, given the circumference of a wheel. Distance and
 circumference must be in the same unit, return is in number of
 degrees."
   (let [circumference (* Math/PI diameter)
-        degrees-per-cm (/ 360 circumference)]
-    (* cm degrees-per-cm)))
+        degrees-per-distance (/ 360 circumference)]
+    (* distance degrees-per-distance)))
