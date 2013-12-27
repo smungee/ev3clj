@@ -22,8 +22,10 @@
     (.removeListener controller)))
 
 (defn distance-to-degrees [distance diameter]
-  "Calculate number of degrees of rotation required to travel the given distance, given the
-circumference of a wheel. Return units are in the same units as the provided distance."
+  "Calculate number of degrees of rotation required to travel the
+given distance, given the circumference of a wheel. Distance and
+circumference must be in the same unit, return is in number of
+degrees."
   (let [circumference (* Math/PI diameter)
         degrees-per-cm (/ 360 circumference)]
     (* cm degrees-per-cm)))
