@@ -14,7 +14,6 @@
 (defn setSpeed
   "Sets speed for the given motor"
   ([motor speed]
-     (println (str "Set speed to " speed))
      (.setSpeed motor speed))
   ([speed]
      (.setSpeed left speed)
