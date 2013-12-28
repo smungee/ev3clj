@@ -71,7 +71,7 @@ sensors, etc."
         (.getDeclaredMethod LOCAL_EV3_GET_LOCAL_EV3 nil)
         (.invoke nil nil))))
 
-(defn- getMotorController [motorName]
+(defn getMotorController [motorName]
   "Given a motor name, returns a function that can be used to get the
 low-level Java object that controls the motor"
   (fn []
