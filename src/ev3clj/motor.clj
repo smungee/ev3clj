@@ -10,13 +10,14 @@ usually identified with a string containing a single letter, like
 A,B,C or D"
   (let [controller (getMotorController motor)]
     {:tachoCount (.getTachoCount controller)
-     :position (.getPosition controller)
-     :isMoving (.isMoving controller)
-     :acceleration (.getAcceleration controller)
-     :limitAngle (.getLimitAngle controller)
-     :speed (.getSpeed controller)
-     :isStalled (.isStalled controller)
-     :timestamp (System/currentTimeMillis)}))
+     ;; :position (.getPosition controller)
+     ;; :isMoving (.isMoving controller)
+     ;; :acceleration (.getAcceleration controller)
+     ;; :limitAngle (.getLimitAngle controller)
+     ;; :speed (.getSpeed controller)
+     ;; :isStalled (.isStalled controller)
+     ;; :timestamp (System/currentTimeMillis)
+     }))
 
 (defn setSpeed! [motor speed]
   "Sets speed of the motor"

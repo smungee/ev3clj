@@ -8,10 +8,13 @@
   [motor]
   (let [mockMotor (reify RegulatedMotor
                    (forward [this]
-                     (printf "Forward called for motor %s " motor)))]
+                     (printf "Forward called for motor %s " motor))
+                   (getTachoCount [this]
+                     200))]
     mockMotor))
 
-(deftest test-forward
-  (testing "Testing motor forward!"
+(deftest test-motor-ops
+  (testing "Testing motor forward! and poll"
     (with-redefs [getMotorController mock-getMotorController]
-      (is (= (forward! "B") nil)))))
+      (is (= (forward! "B") nil))
+      (is (= (:tachoCount (poll "B")) 200)))))
