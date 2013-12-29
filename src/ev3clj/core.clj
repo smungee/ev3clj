@@ -9,7 +9,7 @@
 
 ;; B and C are labelled ports on the EV3
 (defn left [] (getMotor "B"))
-(defn right [] (getMotor "C"))  
+(defn right [] (getMotor "C"))
 
 (defn setSpeed
   "Sets speed for the given motor"
@@ -18,6 +18,7 @@
   ([speed]
      (.setSpeed left speed)
      (.setSpeed right speed)))
+
 
 (defn forward! [motor]
   (.forward motor))
@@ -39,7 +40,7 @@
      (setSpeed right right_speed)
      (forward! left)
      (forward! right)))
- 
+
 
 (defn backward [speed]
 ;  (map #(setSpeed %1 speed) [left right])
@@ -52,7 +53,7 @@
 (defn stop []
   (stopmotor! left)
   (stopmotor! right))
-             
+
 
 (defn wait [millisec]
   (Thread/sleep (* millisec 1000)))
@@ -69,10 +70,3 @@
  (forward speed)
  (wait 10)
  (stop))
-
-
- 
-
- 
- 
- 
