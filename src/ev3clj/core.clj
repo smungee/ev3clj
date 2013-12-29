@@ -19,7 +19,6 @@
      (.setSpeed left speed)
      (.setSpeed right speed)))
 
-
 (defn forward! [motor]
   (.forward motor))
 
