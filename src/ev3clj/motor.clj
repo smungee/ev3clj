@@ -2,7 +2,8 @@
   (:import lejos.nxt.EV3)
   (:require [clojure.core.async :refer [<!! >!! chan]]
             [clojure.string :refer [lower-case]]
-            [overtone.at-at :refer :all]))
+            [overtone.at-at :refer :all]
+            [ev3clj.ev3-simulator :refer :all]))
 
 (declare get-motor-controller)
 
@@ -102,10 +103,14 @@ sensors, etc."
 (defn get-motor-controller [motorName]
   "Given a motor name, returns a function that can be used to get the
 low-level Java object that controls the motor"
-  (fn []
-    (let [ev3 (get-local-ev3)
-          motor (get-port-number-from-string motorName)]
-      (.getMotor ev3 motor))))
+  (let [motor (get-port-number-from-string motorName)]
+    (try
+      (let [ev3 (get-local-ev3)
+            ]
+        (.getMotor ev3 motor))
+      (catch Throwable t
+        (printf "Warning: Caught exception: \"%s\", returning simulated motor\n" (.getMessage t))
+        (simulated-motor motor)))))
 
 ;; some test code
 (comment
