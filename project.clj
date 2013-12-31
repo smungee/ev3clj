@@ -1,5 +1,5 @@
 (defproject ev3 "0.1.0-SNAPSHOT"
-  :description "Idiomatic Clojure API for the LEGO Mindstorms EV3"
+  :description "Idiomatic Clojure API for the LEGO Mindstorms EV3 robot"
   :url "http://github.com/smungee/ev3clj"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
