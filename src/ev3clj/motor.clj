@@ -110,6 +110,7 @@ low-level Java object that controls the motor"
         (.getMotor ev3 motor))
       (catch Throwable t
         (printf "Warning: Caught exception: \"%s\", returning simulated motor\n" (.getMessage t))
+        (create-motor! motor)
         (simulated-motor motor)))))
 
 ;; some test code

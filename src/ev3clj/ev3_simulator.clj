@@ -4,24 +4,44 @@
 
 (def motors (atom {}))
 
-(defn get-motor-state
-  "Given a motor, get the current motor state"
+(def default-motor-state {:speed 0 :tacho-count 0 :is-moving false})
+
+(defn set-motor-state!
+  "Sets the motor state to a new value"
+  [motor new-state]
+  (printf "set-motor-state!: Setting motor %s to %s\n" motor new-state)
+  (swap! motors assoc motor new-state))
+
+(defn create-motor!
+  "Creates a new motor"
   [motor]
-  (def new-motor-value {:speed 0 :tacho-count 0})
-  (when-let [current-motor (find @motors motor)]
-    (def new-motor-value
-      (assoc new-motor-value :tacho-count  (+ (:tacho-count (val current-motor)) 100))))
-  (swap! motors assoc motor new-motor-value)
+  (set-motor-state! motor default-motor-state)
+  default-motor-state)
+
+(defn get-motor-state
+  "Given a motor, get the current motor state. If this is the first
+  time this motor is being used, initialize it."
+  [motor]
   (get @motors motor))
 
 (defn simulated-motor
   "Returns a mock instance of RegulatedMotor, useful for testing"
   [motor]
-  (let [sim-motor (reify RegulatedMotor
+  (let [motor-state (get-motor-state motor)
+        sim-motor (reify RegulatedMotor
+                    (setSpeed [this speed]
+                      (let [start-time (System/currentTimeMillis)
+                            new-motor-state (assoc motor-state
+                                              :speed speed)]
+                        (set-motor-state! motor new-motor-state)))
                     (forward [this]
-                      (printf "Forward called for motor %s " motor))
+                      (let [start-time (System/currentTimeMillis)
+                            new-motor-state (assoc motor-state
+                                              :start-time start-time
+                                              :is-moving true)]
+                        (set-motor-state! motor new-motor-state)))
                     (getTachoCount [this]
-                      (:tacho-count (get-motor-state motor))))]
+                      (:tacho-count motor-state)))]    
     sim-motor))
 
 
