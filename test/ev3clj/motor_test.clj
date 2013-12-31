@@ -8,3 +8,10 @@
     (is (= (forward! "B") nil))
     (is (>= (:tacho-count (poll "B")) 0))))
 
+(comment
+  (poll "B")
+  (let [channel (make-channel 1000 "B")]
+    (loop []
+      (println (async/<!! channel))
+      (Thread/sleep 1000)
+      (recur))))

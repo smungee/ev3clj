@@ -22,6 +22,8 @@
   "Given a motor, get the current motor state. If this is the first
   time this motor is being used, initialize it."
   [motor]
+  (when (nil? (find @motors motor))
+    (create-motor! motor))
   (get @motors motor))
 
 (defn simulated-motor
@@ -34,6 +36,10 @@
                             new-motor-state (assoc motor-state
                                               :speed speed)]
                         (set-motor-state! motor new-motor-state)))
+                    (getSpeed [this]
+                      (:speed motor-state))
+                    (isMoving [this]
+                      (:is-moving motor-state))
                     (forward [this]
                       (let [start-time (System/currentTimeMillis)
                             new-motor-state (assoc motor-state

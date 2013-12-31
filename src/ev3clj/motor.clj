@@ -16,10 +16,10 @@ A,B,C or D"
     (printf "motor.poll: called for motor %s\n" motor)
     {:tacho-count (.getTachoCount controller)
      ;; :position (.getPosition controller)
-     ;; :isMoving (.isMoving controller)
+     :isMoving (.isMoving controller)
      ;; :acceleration (.getAcceleration controller)
      ;; :limitAngle (.getLimitAngle controller)
-     ;; :speed (.getSpeed controller)
+     :speed (.getSpeed controller)
      ;; :isStalled (.isStalled controller)
      :timestamp (System/currentTimeMillis)
      }))
@@ -110,12 +110,14 @@ low-level Java object that controls the motor"
         (.getMotor ev3 motor))
       (catch Throwable t
         (printf "Warning: Caught exception: \"%s\", returning simulated motor\n" (.getMessage t))
-        (create-motor! motor)
         (simulated-motor motor)))))
 
 ;; some test code
 (comment
   (def left "B")
   (forward! left)
+  (setSpeed! left 400)
+  (poll left)
   (flt! left)
-  (stop! left))
+  (stop! left)
+  (make-channel 1000 left))
