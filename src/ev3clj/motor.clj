@@ -1,19 +1,19 @@
 (ns ev3clj.motor
   (:import lejos.nxt.EV3)
-  (:require [clojure.core.async :refer :all]
+  (:require [clojure.core.async :refer [<!! >!! chan]]
             [clojure.string :refer [lower-case]]
             [overtone.at-at :refer :all]))
 
-(declare getMotorController)
+(declare get-motor-controller)
 
 (defn poll
   "Gets the latest values associated with this motor. The EV3 motor is
 usually identified with a string containing a single letter, like
 A,B,C or D"
   [motor]
-  (let [controller (getMotorController motor)]
-    (printf "poll called for motor %s" motor)
-    {:tachoCount (.getTachoCount controller)
+  (let [controller (get-motor-controller motor)]
+    (printf "motor.poll: called for motor %s\n" motor)
+    {:tacho-count (.getTachoCount controller)
      ;; :position (.getPosition controller)
      ;; :isMoving (.isMoving controller)
      ;; :acceleration (.getAcceleration controller)
@@ -25,7 +25,7 @@ A,B,C or D"
 
 (def motor-threadpool (mk-pool))
 
-(defn publishToChannel
+(defn publish-to-channel
   "Poll the given motor and push the result to the given channel"
   [motor chan]
   (>!! chan (poll motor)))
@@ -36,46 +36,46 @@ A,B,C or D"
   [period motor]
   (let [channel (chan 100)]
     (printf "Starting to poll motor %s at period %d\n" motor period)
-    (every period #(publishToChannel motor channel) motor-threadpool)
+    (every period #(publish-to-channel motor channel) motor-threadpool)
     channel))
 
 (defn setSpeed!
   "Sets speed of the motor"
   [motor speed]
-  (let [controller (getMotorController motor)]
+  (let [controller (get-motor-controller motor)]
     (.setSpeed controller speed)))
 
 (defn setAcceleration!
   "Sets acceleration of the motor"
   [motor acceleration]
-  (let [controller (getMotorController motor)]
+  (let [controller (get-motor-controller motor)]
     (.setAcceleration controller acceleration)))
 
-(defn forward! 
+(defn forward!
   "Makes this motor move forward"
   [motor]
-  (let [controller (getMotorController motor)]
+  (let [controller (get-motor-controller motor)]
     (.forward controller)))
 
 (defn backward!
   "Makes this motor move backward"
   [motor]
-  (let [controller (getMotorController motor)]
-        (.backward controller)))
+  (let [controller (get-motor-controller motor)]
+    (.backward controller)))
 
 (defn stop!
   "Makes this motor stop"
   [motor]
-  (let [controller (getMotorController motor)]
+  (let [controller (get-motor-controller motor)]
     (.stop controller)))
 
-(defn flt! 
+(defn flt!
   "Makes this motor float"
   [motor]
-  (let [controller (getMotorController motor)]
+  (let [controller (get-motor-controller motor)]
     (.flt controller)))
 
-(defn- getPortNumberFromString 
+(defn- get-port-number-from-string
   "Given a motor name like \"A\", return the port number, e.g. 0"
   [motorName]
   (-> motorName
@@ -91,7 +91,7 @@ A,B,C or D"
 (def LOCAL_EV3_CLASS "lejos.nxt.LocalEV3")
 (def LOCAL_EV3_GET_LOCAL_EV3 "getLocalEV3")
 
-(defn- getLocalEV3 []
+(defn- get-local-ev3 []
   "Gets the local ev3 class that can be used to get access to motors,
 sensors, etc."
   (let [clazz (Class/forName LOCAL_EV3_CLASS)]
@@ -99,12 +99,12 @@ sensors, etc."
         (.getDeclaredMethod LOCAL_EV3_GET_LOCAL_EV3 nil)
         (.invoke nil nil))))
 
-(defn getMotorController [motorName]
+(defn get-motor-controller [motorName]
   "Given a motor name, returns a function that can be used to get the
 low-level Java object that controls the motor"
   (fn []
-    (let [ev3 (getLocalEV3)
-          motor (getPortNumberFromString motorName)]
+    (let [ev3 (get-local-ev3)
+          motor (get-port-number-from-string motorName)]
       (.getMotor ev3 motor))))
 
 ;; some test code

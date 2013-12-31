@@ -4,29 +4,38 @@
             [clojure.core.async :as async])
   (:import lejos.robotics.RegulatedMotor))
 
-(defn mock-getMotorController
+(def mock-tacho-counters (atom {}))
+
+(defn get-tacho-counter
+  "Given a motor, get the current tacho count"
+  [motor]
+  (def new-tacho-value 0)
+  (when-let [current-tacho-count (find @mock-tacho-counters motor)]
+    (def new-tacho-value (+ (val current-tacho-count) 100)))
+  (swap! mock-tacho-counters assoc motor new-tacho-value)
+  (get @mock-tacho-counters motor))
+
+(defn mock-get-motor-controller
   "Returns a mock instance of RegulatedMotor, useful for testing"
   [motor]
-  (let [counter (atom 0N)
-        mockMotor (reify RegulatedMotor
-                   (forward [this]
-                     (printf "Forward called for motor %s " motor))
-                   (getTachoCount [this]
-                     (swap! counter + 200)
-                     @counter))]
+  (let [mockMotor (reify RegulatedMotor
+                    (forward [this]
+                      (printf "Forward called for motor %s " motor))
+                    (getTachoCount [this]
+                      (get-tacho-counter motor)))]
     mockMotor))
 
 (deftest test-motor-ops
   (testing "Testing motor forward! and poll"
-    (with-redefs [getMotorController mock-getMotorController]
+    (with-redefs [get-motor-controller mock-get-motor-controller]
       (is (= (forward! "B") nil))
-      (is (= (:tachoCount (poll "B")) 200)))))
+      (is (>= (:tacho-count (poll "B")) 0)))))
 
 (comment
-  (with-redefs [getMotorController mock-getMotorController]
+  (with-redefs [get-motor-controller mock-get-motor-controller]
     (poll "B")
     (let [channel (make-channel 1000 "B")]
       (loop []
-        (println (<!! channel))
+        (println (async/<!! channel))
         (Thread/sleep 1000)
         (recur)))))
